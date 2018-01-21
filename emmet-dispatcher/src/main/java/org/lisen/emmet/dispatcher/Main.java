@@ -14,6 +14,7 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.lisen.emmet.commons.util.SysProp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,7 @@ public class Main implements Watcher {
 	}
 	
 	void startZk() throws IOException {
-		zk = new ZooKeeper(SysConfig.getZkServerAndPort(), 15000, this);
+		zk = new ZooKeeper(SysProp.getZkServerAndPort(), 15000, this);
 	}
 	
 	
