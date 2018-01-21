@@ -30,9 +30,6 @@ public class Main implements Watcher {
 	
 	private ZooKeeper zk;
 	
-	@SuppressWarnings("unused")
-	private String hostPort;
-	
 	private String serverId = Integer.toHexString(random.nextInt());
 	
 	private volatile boolean connected = false;
@@ -74,7 +71,7 @@ public class Main implements Watcher {
 	}
 	
 	void startZk() throws IOException {
-		zk = new ZooKeeper("127.0.0.1:2181", 15000, this);
+		zk = new ZooKeeper(SysConfig.getZkServerAndPort(), 15000, this);
 	}
 	
 	
@@ -188,6 +185,7 @@ public class Main implements Watcher {
 					/*
 					 * 执行领导者职能，从task节点获取任务列表，然后分配给可用的工作者
 					 */
+					
 				} else {
 					/*
 					 * 如果该节点不是主节点，则需要在master节点上设置监听，以便于主节点发生故障或失去连接时，能
@@ -248,6 +246,7 @@ public class Main implements Watcher {
 	};
 	
 	public static void main(String[] arg) throws Exception {
+		
 		Main main = new Main();
 		main.startZk();
 		

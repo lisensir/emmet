@@ -7,12 +7,13 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.lisen.emmet.commons.util.SysProp;
 
 public class ClearNodes {
 	
 	public static void main(String[] arg) throws IOException, KeeperException, InterruptedException {
 		
-		ZooKeeper zk = new ZooKeeper("127.0.0.1:2181", 1500, new Watcher() {
+		ZooKeeper zk = new ZooKeeper(SysProp.getZkServerAndPort(), 1500, new Watcher() {
 			public void process(WatchedEvent e) {
 				if(e.getType() ==  null) {
 					return;

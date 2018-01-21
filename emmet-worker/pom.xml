@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.lisen</groupId>
+    <artifactId>emmet</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>emmet-worker</artifactId>
+  <name>worker</name>
+  <description>工作者，处理调度器分配给自己的任务</description>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.lisen</groupId>
+  		<artifactId>emmet-commons</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
+  
+</project>
