@@ -201,6 +201,14 @@ public class Main implements Watcher {
 		}
 	};
 	
+	
+	/**
+	 * 执行领导权
+	 */
+	void exceLeadership() {
+		
+	}
+	
 	/**
 	 * 在本节点不能成为主节点的情况下，本节点需要监视master节点，以便于主节点在发生故障或失去连接时，能参与
 	 * 主节点的竞选。

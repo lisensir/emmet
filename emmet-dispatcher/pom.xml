@@ -70,7 +70,7 @@
 	                    <manifest>  
 	                        <mainClass>org.lisen.emmet.dispatcher.Main</mainClass>  
 	                    </manifest>  
-	                </archive>  
+	                </archive>
 	                <descriptorRefs>  
 	                    <descriptorRef>jar-with-dependencies</descriptorRef>  
 	                </descriptorRefs>  
