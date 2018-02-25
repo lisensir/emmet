@@ -1,8 +1,10 @@
 package org.lisen.emmet.dispatcher;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
+import org.apache.zookeeper.AsyncCallback.ChildrenCallback;
 import org.apache.zookeeper.AsyncCallback.DataCallback;
 import org.apache.zookeeper.AsyncCallback.StatCallback;
 import org.apache.zookeeper.AsyncCallback.StringCallback;
@@ -11,6 +13,7 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
@@ -147,6 +150,10 @@ public class Main implements Watcher {
 			case OK:
 				state = DispatcherState.ELECTED;
 				logger.info("我已经是主节点了....");
+				/*
+				 * 执行领导者职能，从task节点获取任务列表，然后分配给可用的工作者
+				 */
+				exceLeadership();
 				break;
 			case NODEEXISTS:
 				/*
@@ -186,7 +193,7 @@ public class Main implements Watcher {
 					/*
 					 * 执行领导者职能，从task节点获取任务列表，然后分配给可用的工作者
 					 */
-					
+					exceLeadership();
 				} else {
 					/*
 					 * 如果该节点不是主节点，则需要在master节点上设置监听，以便于主节点发生故障或失去连接时，能
@@ -206,8 +213,60 @@ public class Main implements Watcher {
 	 * 执行领导权
 	 */
 	void exceLeadership() {
-		
+		getWorkers();
 	}
+	
+	
+	/**
+	 * 获取注册的工作者
+	 */
+	void getWorkers() {
+		zk.getChildren("/workers", 
+				workersChangeWatcher,
+				workersGetChildrenCallback,
+				null);
+	}
+
+	
+	/**
+	 * 监视器，当worker增加或减少时触发重新获取workers
+	 */
+	Watcher workersChangeWatcher = new Watcher() {
+		@Override
+		public void process(WatchedEvent e) {
+			if(e.getType() == EventType.NodeChildrenChanged) {
+				assert "/workers".equals(e.getPath());
+				getWorkers();
+			}
+		}
+	};
+	
+	
+	/**
+	 * 获取注册的工作者的回调函数，用于处理丢失连接，正常返回等各种正常或异常情况
+	 */
+	ChildrenCallback workersGetChildrenCallback = new ChildrenCallback() {
+		@Override
+		public void processResult(int rc, String path, Object ctx, List<String> children) {
+			switch(Code.get(rc)) {
+			case CONNECTIONLOSS:
+				logger.info("获取工作者时发生了连接丢失，重新获取工作者...");
+				getWorkers();
+				break;
+			case OK:
+				logger.info("成功获取工作者，进行任务分配...");
+				for(String worker: children) {
+					System.out.println("........ worker desc = " + worker);
+				}
+				//TODO ... 执行任务分配
+				//reassignAndSet
+				break;
+			default:
+				logger.info("获取工作者失败",KeeperException.create(Code.get(rc), path));
+				break;
+			}
+		}
+	};
 	
 	/**
 	 * 在本节点不能成为主节点的情况下，本节点需要监视master节点，以便于主节点在发生故障或失去连接时，能参与
